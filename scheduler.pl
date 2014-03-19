@@ -28,3 +28,12 @@ noAttack(X / Y, [X1 / Y1 | Rest]) :- Y =\= Y1,				  % not in the same row
 									 abs(X-X1) =\= abs(Y-Y1), % not on the same diagonal
                                      noAttack(X / Y, Rest).
 */
+
+isAdjacent(course(_,_,Adjacent,_),course(Name2,_,_,_)) :-
+				member(Name2,Adjacent).
+/*Fricked up,Check out foldr*/				
+ruleOut(Course,Slot,[ X | Rest ],NewCourses) :-
+			if(isAdjacent(Course , X),
+				(ruleOutSlot(Slot,X,X1),NewCourses = [X1 | NewCourses],
+				X1 is X
+			   ).
