@@ -7,9 +7,23 @@
 :- use_module('Course.pl').
 
 schedule(CourseData,NumSlots,Schedule) :-
-		% Create courses list,
-		solution(Courses,Schedule).
+		maplist(newCourse(NumSlots),CourseData,Courses),	% Create all courses
+		maplist(setAdjacent(Courses),Courses,CourseList),	% Create adjoined list of courses
+		solver(CourseList,Schedule).
 
+%setAdjacencies(Courses,CourseList),
+setAdjacencies(Courses,CourseList) :-
+				maplist(setAdjacent(Courses),Courses,CourseList).
+
+				
+/*Fricked up,Check out foldr				
+ruleOut(Course,Slot,[ X | Rest ],NewCourses) :-
+			if(isAdjacent(Course , X),
+				(ruleOutSlot(Slot,X,X1),NewCourses = [X1 | NewCourses],
+				X1 is X
+			   ).
+*/
+			   
 /*
 solution(Courses,Schedule) :- 
 	uniqueCourses(Courses,Schedule),
@@ -28,12 +42,3 @@ noAttack(X / Y, [X1 / Y1 | Rest]) :- Y =\= Y1,				  % not in the same row
 									 abs(X-X1) =\= abs(Y-Y1), % not on the same diagonal
                                      noAttack(X / Y, Rest).
 */
-
-isAdjacent(course(_,_,Adjacent,_),course(Name2,_,_,_)) :-
-				member(Name2,Adjacent).
-/*Fricked up,Check out foldr*/				
-ruleOut(Course,Slot,[ X | Rest ],NewCourses) :-
-			if(isAdjacent(Course , X),
-				(ruleOutSlot(Slot,X,X1),NewCourses = [X1 | NewCourses],
-				X1 is X
-			   ).
