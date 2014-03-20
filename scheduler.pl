@@ -11,18 +11,11 @@ schedule(CourseData,NumSlots,Schedule) :-
 		maplist(setAdjacent(Courses),Courses,CourseList),	% Create adjoined list of courses
 		solver(CourseList,Schedule).
 
-%setAdjacencies(Courses,CourseList),
-setAdjacencies(Courses,CourseList) :-
-				maplist(setAdjacent(Courses),Courses,CourseList).
 
-				
-/*Fricked up,Check out foldr				
-ruleOut(Course,Slot,[ X | Rest ],NewCourses) :-
-			if(isAdjacent(Course , X),
-				(ruleOutSlot(Slot,X,X1),NewCourses = [X1 | NewCourses],
-				X1 is X
-			   ).
-*/
+isAdjacent(course(_,_,Adjacent,_),course(Name2,_,_,_)) :-
+				member(Name2,Adjacent).
+
+
 			   
 /*
 solution(Courses,Schedule) :- 
