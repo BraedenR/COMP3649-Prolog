@@ -15,7 +15,8 @@ schedule(CourseData,NumSlots,Schedule) :-
 isAdjacent(course(_,_,Adjacent,_),course(Name2,_,_,_)) :-
 				member(Name2,Adjacent).
 
-
+pairUp(Course,ScheduleElem) :-
+		ScheduleElem = {Course,_}.
 			   
 /*
 solution(Courses,Schedule) :- 
