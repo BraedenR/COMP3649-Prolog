@@ -24,8 +24,8 @@ solve(Courses,NumSlots,Schedule) :-
 			allSlots(NumSlots,Schedule).
 
 		
-allSlots([]).
-allSlots(NumSlots,[ {Course,Slot} | Rest ]) :- safeRows(Rest),
+allSlots(_,[]). :- !.
+allSlots(NumSlots,[ {Course,Slot} | Rest ]) :- allSlots(NumSlots,Rest),
 							  numList(1,NumSlots,Slots),
                               member(Slot, Slots),
 							  ruleOut(Slot,Schedule,[{Course2,Slot2} | Rest2]),
