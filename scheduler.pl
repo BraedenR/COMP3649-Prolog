@@ -11,7 +11,41 @@ schedule(CourseData,NumSlots,Schedule) :-
 			maplist(setAdjacent(Courses),Courses,CourseList),	% Create adjoined list of courses
 			solver(CourseList,Schedule).
 
+			
+solver([],_).
+solver([course(Name,_,Adj,Slots) | Rest], Schedule) :-
+	% Get desired slot
+		member(X,Slots),
+	% ruleOut slot with the grabbed timeslot
+		ruleOut(X,Adj,Rest,UpdatedCourses),
+	% append to schedule
+		NewSchedule = [{Name,X}|Schedule],
+	% recurse 
+		solver(UpdatedCourses,NewSchedule).
 
+ruleOut(_,_,[],_).
+ruleOut(Slot,Adj,[Course|Rest],NewCourses) :-
+			Course = course(Name,_,_,_),
+			if(member(Name,Adj),
+				(
+					ruleOutSlot(Slot,Course,NewCourse),
+					NewCourses2 = [NewCourse | NewCourses],
+					ruleOut(Slot,Adj,Rest,NewCourses2)
+				),
+				(
+					NewCourses2 = [Course | NewCourses],
+					ruleOut(Slot,Adj,Rest,NewCourses2)
+				)
+			   ).
+			   
+
+if(Test,Then) :- if(Test,Then,true).
+if(Test,Then,Else) :- Test, !, Then ; Else.
+
+foldr(_,G,[],G) :- !.
+foldr(F,G,[X | XS], A) :- foldr(F,G,XS,A2),
+                          call(F,X,A2,A).			   
+/*
 isAdjacent(course(_,_,Adjacent,_),course(Name2,_,_,_)) :-
 				member(Name2,Adjacent).
 
@@ -43,3 +77,4 @@ ruleOut(SlotNum,[{Course,Slot} | Rest] , Schedule) :-
 			ruleOut(SlotNum,Rest,Schedule2),
 			ruleOutSlot(SlotNum,Course,Course2),
 			Schedule = [{Course2,Slot} | Schedule2].
+*/
