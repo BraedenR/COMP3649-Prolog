@@ -14,29 +14,27 @@ schedule(CourseData,NumSlots,Schedule) :-
 			
 solver([],_).
 solver([course(Name,_,Adj,Slots) | Rest], Schedule) :-
-	% Get desired slot
 		member(X,Slots),
-	% ruleOut slot with the grabbed timeslot
-		ruleOut(X,Adj,Rest,UpdatedCourses),
-	% append to schedule
-		NewSchedule = [{Name,X}|Schedule],
-	% recurse 
-		solver(UpdatedCourses,NewSchedule).
+		ruleOut(X,Adj,Rest,[],UpdatedCourses),
+		write(UpdatedCourses), nl.
+		% NewSchedule = [{Name,X}|Schedule],
+		% solver(UpdatedCourses,NewSchedule).
 
-ruleOut(_,_,[],_).
-ruleOut(Slot,Adj,[Course|Rest],NewCourses) :-
-			Course = course(Name,_,_,_),
+ruleOut(_,_,[],WorkingCourses,NewCourses) :- NewCourses = WorkingCourses.
+ruleOut(Slot,Adj,[course(Name,Ids,Adjacent,Slots)|Rest],WorkingCourses,NewCourses) :-
 			if(member(Name,Adj),
 				(
-					ruleOutSlot(Slot,Course,NewCourse),
-					NewCourses2 = [NewCourse | NewCourses],
-					ruleOut(Slot,Adj,Rest,NewCourses2)
+					ruleOutSlot(Slot,course(Name,Ids,Adjacent,Slots),NewCourse),
+					NewCourses2 = [NewCourse | WorkingCourses],
+					ruleOut(Slot,Adj,Rest,NewCourses2,NewCourses)
 				),
 				(
-					NewCourses2 = [Course | NewCourses],
-					ruleOut(Slot,Adj,Rest,NewCourses2)
+					NewCourses2 = [course(Name,Ids,Adjacent,Slots) | WorkingCourses],
+					ruleOut(Slot,Adj,Rest,NewCourses2,NewCourses)
 				)
 			   ).
+
+			
 			   
 
 if(Test,Then) :- if(Test,Then,true).
